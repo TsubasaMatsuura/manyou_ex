@@ -1,24 +1,28 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+create_table "labels", force: :cascade do |t|
+    t.string "title"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_labels_on_user_id"
+  end
 
-Things you may want to cover:
+  create_table "tasks", force: :cascade do |t|
+    t.string "name"
+    t.text "detail"
+    t.date "deadline"
+    t.integer "progress"
+    t.integer "priority"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
+    t.boolean "admin"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
