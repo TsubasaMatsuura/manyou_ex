@@ -358,6 +358,4 @@
   - Webサーバ（Nginx）の設定
   - アプリケーションサーバ（Unicorn）の設定
   - PostgreSQLに関する設定への理解
-- リリースに関するツールの理解
-  - Capistrano
-  - Ansible
+- リリースに関するツールの理解      
