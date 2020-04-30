@@ -1,14 +1,23 @@
 require 'rails_helper'
 RSpec.describe 'タスク管理機能', type: :system do
+  before do
+
+    @task = FactoryBot.create(:task, name: 'task')
+  end
   describe 'タスク一覧画面' do
     context 'タスクを作成した場合' do
       it '作成済みのタスクが表示される' do
-        task = FactoryBot.create(:task, name: 'task')
-      # タスク一覧ページに遷移
-      visit tasks_path
-      # visitした（遷移した）page（タスク一覧ページ）に「task」という文字列が
-      # have_contentされているか。（含まれているか。）ということをexpectする（確認・期待する）
-      expect(page).to have_content 'task'
+        visit tasks_path
+        expect(page).to have_content 'task'
+      end
+    end
+    context '複数のタスクを作成した場合' do
+      it 'タスクが作成日時の降順に並んでいる' do
+       new_task = FactoryBot.create(:task, name: 'new_task')
+       visit tasks_path
+       task_list = all('.task_row') 
+       expect(task_list[0]).to have_content 'new_task'
+       expect(task_list[1]).to have_content 'task'
       end
     end
   end
@@ -31,9 +40,11 @@ RSpec.describe 'タスク管理機能', type: :system do
         task = FactoryBot.create(:task, name: 'wwwww', detail: 'xxxx')
         visit tasks_path
 
-      expect(page).to have_content "wwwww"
-      expect(page).to have_content "xxxx"
+        expect(page).to have_content "wwwww"
+        expect(page).to have_content "xxxx"
       end
     end
   end
+
+
 end
