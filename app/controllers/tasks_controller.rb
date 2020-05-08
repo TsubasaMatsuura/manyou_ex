@@ -4,9 +4,20 @@ class TasksController < ApplicationController
   # GET /tasks
   def index
     @tasks = Task.all
-  @tasks = @tasks.order(deadline: :ASC)
+ if params[:sort_expired] == "true"  
+        @tasks = @tasks.order(deadline: :ASC)
 
+      elsif params[:sort_priority] == "true"
+      @tasks = @tasks.order(priority: :DESC)
 
+      elsif params[:task].present?
+        name = params[:task][:name]
+        progress = params[:task][:progress]
+        @tasks = @tasks.search_name(name).search_progress(progress)
+  
+      else
+        @tasks = @tasks.all.order(created_at: :desc)
+      end
   end
 
   # GET /tasks/1

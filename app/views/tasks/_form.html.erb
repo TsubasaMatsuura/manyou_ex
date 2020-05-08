@@ -12,28 +12,28 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :name %>
+    <%= form.label :タイトル %>
     <%= form.text_field :name %>
   </div>
 
   <div class="field">
-    <%= form.label :detail %>
+    <%= form.label :内容 %>
     <%= form.text_area :detail %>
   </div>
 
   <div class="field">
-    <%= form.label :deadline %>
+    <%= form.label :終了期限 %>
     <%= form.date_select :deadline %>
   </div>
 
   <div class="field">
-    <%= form.label :progress %>
-    <%= form.number_field :progress %>
+    <%= form.label :進捗 %>
+    <%= form.select :progress, Task.progresses.keys %> 
   </div>
 
   <div class="field">
-    <%= form.label :priority %>
-    <%= form.number_field :priority %>
+    <%= form.label :優先順位 %>
+     <%= form.select :priority, Task.priorities.keys %>
   </div>
 
   <div class="actions">

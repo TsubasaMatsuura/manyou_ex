@@ -9,4 +9,10 @@ class Task < ApplicationRecord
       order(priority: :desc).order(created_at: :desc)
     end
   end
+
+  enum progress: { "未着手": 0, "着手中": 1, "完了": 2 }
+  enum priority: { "低": 0, "中": 1, "高": 2 }
+
+  scope :search_name, -> (name) { where("name LIKE ?", "%#{(name)}%") if name.present? }
+  scope :search_progress, -> (progress) { where(progress: progress) if progress.present? }
 end
