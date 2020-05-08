@@ -2,6 +2,18 @@
 
 <h1>Tasks</h1>
 <%= link_to '終了期限でソート', tasks_path(sort_option: 'daedline'), meshod: :post %>
+<%= form_with(model: Task.new, url: tasks_path, method: :get, local: true) do |form| %>
+  <div class="field">
+    <%= form.label ("activerecord.attributes.task.name") %>
+    <%= form.text_field :name %>
+  </div>
+  <div class="task_title">
+    <%= form.label ("activerecord.attributes.task.progress") %>
+    <%= form.select :progress, [["未着手", 0 ], ["着手中", 1 ], ["完了", 2 ]] ,{include_blank: true}%>
+  </div>
+   <%= form.submit "検索" %>
+<% end %>
+
 <table>
   <thead>
     <tr>
