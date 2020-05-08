@@ -37,6 +37,52 @@ RSpec.describe 'タスク管理機能', type: :system do
       end
     end
 
+    context '検索ボタンを押した場合' do
+      before do
+        task = FactoryBot.create(:task, title: 'third title', content: 'third content', end_date: '2030-12-01',user_id: @user.id)
+        task = FactoryBot.create(:task, title: 'first title', content: 'first content', end_date: '1990-12-01',user_id: @user.id)
+        task = FactoryBot.create(:task, title: 'second title', content: 'second content', end_date: '2020-12-01',user_id: @user.id)
+        task = FactoryBot.create(:task, title: 'status', content: 'second content', end_date: '2020-12-01', status: '着手中',user_id: @user.id)
+        task = FactoryBot.create(:task, title: 'status1', content: 'second content', end_date: '2020-12-01', status: '着手中',user_id: @user.id)
+      end
+      it '検索条件に該当したタイトルのみ表示されていること' do
+        visit tasks_path
+        fill_in 'title', with: 'third title'
+        click_button '検索'
+        task_list = all('.task_title')
+        expect(task_list[0]).to have_content 'third title'
+      end
+      it '検索条件に該当しないタイトルは表示されていないこと', :retry => 3 do
+        visit tasks_path
+        fill_in 'title', with: 'third title'
+        click_button '検索'
+        task_list = all('.task_title')
+        wait.until{ expect(task_list[0]).to_not have_content 'second content' }
+      end
+      it 'ステータスに該当するタイトルのみ表示すること' do
+        visit tasks_path
+        select '着手中', from: 'status'
+        click_button '検索'
+        task_list = all('.task_title')
+        expect(task_list[0]).to have_content 'status'
+      end
+      it 'ステータスに該当しないタイトルは表示されないこと' do
+        visit tasks_path
+        select '着手中', from: 'status'
+        click_button '検索'
+        task_list = all('.task_title')
+        expect(task_list[0]).to_not have_content "second content"
+      end
+      it '複合的な検索条件に該当するタイトルのみ表示すること' do
+        visit tasks_path
+        select '着手中', from: 'status'
+        click_button '検索'
+        task_list = all('.task_title')
+        wait.until { expect(task_list[0]).to have_content "status1" }
+        wait.until { expect(task_list[1]).to have_content "status" }
+      end
+    end
+
   end
   describe 'タスク登録画面' do
     context '必要項目を入力して、createボタンを押した場合' do
