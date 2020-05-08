@@ -1,7 +1,7 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Tasks</h1>
-
+<%= link_to '終了期限でソート', tasks_path(sort_option: 'daedline'), meshod: :post %>
 <table>
   <thead>
     <tr>

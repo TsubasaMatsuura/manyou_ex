@@ -4,6 +4,9 @@ class TasksController < ApplicationController
   # GET /tasks
   def index
     @tasks = Task.all
+  @tasks = @tasks.order(deadline: :ASC)
+
+
   end
 
   # GET /tasks/1

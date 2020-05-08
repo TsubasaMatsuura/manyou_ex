@@ -20,6 +20,23 @@ RSpec.describe 'タスク管理機能', type: :system do
        expect(task_list[1]).to have_content 'task'
       end
     end
+
+    context '終了期限でソートを押した場合' do
+      before do
+        task = FactoryBot.create(:task, name: 'third title', detail: 'third content', deadline: '2030-12-01')
+        task = FactoryBot.create(:task, name: 'first title', detail: 'first content', deadline: '1990-12-01')
+        task = FactoryBot.create(:task, name: 'second title', detail: 'second content', deadline: '2020-12-01')
+      end
+      it 'タスクの並び順が終了期限の降順で並んでいること', :retry => 3 do
+        visit tasks_path
+        wait.until {click_link '終了期限でソート' }
+        task_list = all('.task_title')
+        expect(task_list[0]).to have_content 'third title'
+        expect(task_list[1]).to have_content 'second title'
+        expect(task_list[2]).to have_content 'first title'
+      end
+    end
+
   end
   describe 'タスク登録画面' do
     context '必要項目を入力して、createボタンを押した場合' do
