@@ -39,45 +39,45 @@ RSpec.describe 'タスク管理機能', type: :system do
 
     context '検索ボタンを押した場合' do
       before do
-        task = FactoryBot.create(:task, title: 'third title', content: 'third content', end_date: '2030-12-01',user_id: @user.id)
-        task = FactoryBot.create(:task, title: 'first title', content: 'first content', end_date: '1990-12-01',user_id: @user.id)
-        task = FactoryBot.create(:task, title: 'second title', content: 'second content', end_date: '2020-12-01',user_id: @user.id)
-        task = FactoryBot.create(:task, title: 'status', content: 'second content', end_date: '2020-12-01', status: '着手中',user_id: @user.id)
-        task = FactoryBot.create(:task, title: 'status1', content: 'second content', end_date: '2020-12-01', status: '着手中',user_id: @user.id)
+        task = FactoryBot.create(:task, name: 'third title', detail: 'third content', deadline: '2030-12-01')
+        task = FactoryBot.create(:task, name: 'first title', detail: 'first content', deadline: '1990-12-01')
+        task = FactoryBot.create(:task, name: 'second title', detail: 'second content', deadline: '2020-12-01')
+        task = FactoryBot.create(:task, name: 'status', detail: 'second content', deadline: '2020-12-01', progress: '着手中')
+        task = FactoryBot.create(:task, name: 'status1', detail: 'second content', deadline: '2020-12-01', progress: '着手中')
       end
       it '検索条件に該当したタイトルのみ表示されていること' do
         visit tasks_path
-        fill_in 'title', with: 'third title'
+        fill_in 'name', with: 'third title'
         click_button '検索'
-        task_list = all('.task_title')
+        task_list = all('.task_name')
         expect(task_list[0]).to have_content 'third title'
       end
       it '検索条件に該当しないタイトルは表示されていないこと', :retry => 3 do
         visit tasks_path
-        fill_in 'title', with: 'third title'
+        fill_in 'name', with: 'third title'
         click_button '検索'
-        task_list = all('.task_title')
+        task_list = all('.task_name')
         wait.until{ expect(task_list[0]).to_not have_content 'second content' }
       end
       it 'ステータスに該当するタイトルのみ表示すること' do
         visit tasks_path
-        select '着手中', from: 'status'
+        select '着手中', from: 'progress'
         click_button '検索'
-        task_list = all('.task_title')
-        expect(task_list[0]).to have_content 'status'
+        task_list = all('.task_name')
+        expect(task_list[0]).to have_content 'progress'
       end
       it 'ステータスに該当しないタイトルは表示されないこと' do
         visit tasks_path
-        select '着手中', from: 'status'
+        select '着手中', from: 'progress'
         click_button '検索'
-        task_list = all('.task_title')
+        task_list = all('.task_name')
         expect(task_list[0]).to_not have_content "second content"
       end
       it '複合的な検索条件に該当するタイトルのみ表示すること' do
         visit tasks_path
-        select '着手中', from: 'status'
+        select '着手中', from: 'progress'
         click_button '検索'
-        task_list = all('.task_title')
+        task_list = all('.task_name')
         wait.until { expect(task_list[0]).to have_content "status1" }
         wait.until { expect(task_list[1]).to have_content "status" }
       end
