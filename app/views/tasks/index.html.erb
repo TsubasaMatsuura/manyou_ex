@@ -9,6 +9,9 @@
   <li class="nav-item">
     <%= link_to '終了期限でソート', tasks_path(sort_expired: "true"),class: "nav-link active btn btn-primary" %>
   </li>
+  <li class="nav-item">
+    <%= link_to t("優先順位でソート"), tasks_path(sort_priority: "true"),class: "nav-link active btn btn-primary" %>
+  </li>
 </ul>
 </div>
 <%= form_with(model: Task.new, url: tasks_path, method: :get, local: true ) do |form| %>
