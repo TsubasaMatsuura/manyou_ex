@@ -7,10 +7,7 @@
     <%= link_to t("新規作成"), new_task_path, class: "nav-link active btn btn-primary" %>
   </li>
   <li class="nav-item">
-    <%= link_to '終了期限でソート', tasks_path(sort_option: 'daedline'), meshod: :post,class: "nav-link active btn btn-primary" %>
-  </li>
-  <li class="nav-item">
-    <%= link_to t("作成時間でソート"), tasks_path(sort_rank: "true" ),class: "nav-link active btn btn-primary" %>
+    <%= link_to '終了期限でソート', tasks_path(sort_expired: "true"),class: "nav-link active btn btn-primary" %>
   </li>
 </ul>
 </div>
