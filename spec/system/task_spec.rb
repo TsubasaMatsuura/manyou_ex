@@ -1,9 +1,7 @@
 require 'rails_helper'
 RSpec.describe 'タスク管理機能', type: :system do
-  before do
+ wait = Selenium::WebDriver::Wait.new(:timeout => 100) 
 
-    @task = FactoryBot.create(:task, name: 'task')
-  end
   describe 'タスク一覧画面' do
     context 'タスクを作成した場合' do
       it '作成済みのタスクが表示される' do
@@ -11,21 +9,20 @@ RSpec.describe 'タスク管理機能', type: :system do
         expect(page).to have_content 'task'
       end
     end
-    context '複数のタスクを作成した場合' do
-      it 'タスクが作成日時の降順に並んでいる' do
-       new_task = FactoryBot.create(:task, name: 'new_task')
-       visit tasks_path
-       task_list = all('.task_row') 
-       expect(task_list[0]).to have_content 'new_task'
-       expect(task_list[1]).to have_content 'task'
-      end
+    # context '複数のタスクを作成した場合' do
+    #   it 'タスクが作成日時の降順に並んでいる' do
+    #    visit tasks_path
+    #    task_list = all('.task_row') 
+    #    expect(task_list[0]).to have_content '付け加えた名前3'
+    #    expect(task_list[1]).to have_content '付け加えた名前1'
+    #   end
     end
 
     context '終了期限でソートを押した場合' do
       before do
-        task = FactoryBot.create(:task, name: 'third title', detail: 'third content', deadline: '2030-12-01')
-        task = FactoryBot.create(:task, name: 'first title', detail: 'first content', deadline: '1990-12-01')
-        task = FactoryBot.create(:task, name: 'second title', detail: 'second content', deadline: '2020-12-01')
+        task1 = FactoryBot.create(:task, name: 'third title', detail: 'third content', deadline: '2030-12-01')
+        task2 = FactoryBot.create(:task, name: 'first title', detail: 'first content', deadline: '1990-12-01')
+        task3 = FactoryBot.create(:task, name: 'second title', detail: 'second content', deadline: '2020-12-01')
       end
       it 'タスクの並び順が終了期限の降順で並んでいること', :retry => 3 do
         visit tasks_path

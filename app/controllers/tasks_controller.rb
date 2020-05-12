@@ -5,18 +5,18 @@ class TasksController < ApplicationController
   def index
     @tasks = Task.all
  if params[:sort_expired] == "true"  
-        @tasks = @tasks.order(deadline: :ASC)
+        @tasks = @tasks.order(deadline: :ASC).page(params[:page])
 
       elsif params[:sort_priority] == "true"
-      @tasks = @tasks.order(priority: :DESC)
+      @tasks = @tasks.order(priority: :DESC).page(params[:page])
 
       elsif params[:task].present?
         name = params[:task][:name]
         progress = params[:task][:progress]
-        @tasks = @tasks.search_name(name).search_progress(progress)
+        @tasks = @tasks.search_name(name).search_progress(progress).page(params[:page])
   
       else
-        @tasks = @tasks.all.order(created_at: :desc)
+        @tasks = @tasks.all.order(created_at: :desc).page(params[:page])
       end
   end
 
