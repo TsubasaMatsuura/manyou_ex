@@ -226,7 +226,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   factory_bot_rails
   faker
-  kaminari (~> 0.17.0)
+  kaminari
   launchy
   listen (>= 3.0.5, < 3.2)
   pg (>= 0.18, < 2.0)

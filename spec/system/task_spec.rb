@@ -1,110 +1,112 @@
 require 'rails_helper'
 RSpec.describe 'タスク管理機能', type: :system do
- wait = Selenium::WebDriver::Wait.new(:timeout => 100) 
+  before do
+
+     FactoryBot.create(:task, name: '付け加えた名前1', detail: '付け加えたコメント1', progress: '完了')
+    @task2 = FactoryBot.create(:second_task, name: '付け加えた名前3', detail: '付け加えたコメント3')
+  end
 
   describe 'タスク一覧画面' do
     context 'タスクを作成した場合' do
-      it '作成済みのタスクが表示される' do
+      it '作成済みのタスクが表示されること' do
+        # beforeに必要なタスクデータが作成されるので、ここでテストデータ作成処理を書く必要がない
         visit tasks_path
-        expect(page).to have_content 'task'
-      end
-    end
-    # context '複数のタスクを作成した場合' do
-    #   it 'タスクが作成日時の降順に並んでいる' do
-    #    visit tasks_path
-    #    task_list = all('.task_row') 
-    #    expect(task_list[0]).to have_content '付け加えた名前3'
-    #    expect(task_list[1]).to have_content '付け加えた名前1'
-    #   end
-    end
-
-    context '終了期限でソートを押した場合' do
-      before do
-        task1 = FactoryBot.create(:task, name: 'third title', detail: 'third content', deadline: '2030-12-01')
-        task2 = FactoryBot.create(:task, name: 'first title', detail: 'first content', deadline: '1990-12-01')
-        task3 = FactoryBot.create(:task, name: 'second title', detail: 'second content', deadline: '2020-12-01')
-      end
-      it 'タスクの並び順が終了期限の降順で並んでいること', :retry => 3 do
-        visit tasks_path
-        wait.until {click_link '終了期限でソート' }
-        task_list = all('.task_title')
-        expect(task_list[0]).to have_content 'third title'
-        expect(task_list[1]).to have_content 'second title'
-        expect(task_list[2]).to have_content 'first title'
+        expect(page).to have_content '付け加えた名前1'
       end
     end
 
-    context '検索ボタンを押した場合' do
-      before do
-        task = FactoryBot.create(:task, name: 'third title', detail: 'third content', deadline: '2030-12-01')
-        task = FactoryBot.create(:task, name: 'first title', detail: 'first content', deadline: '1990-12-01')
-        task = FactoryBot.create(:task, name: 'second title', detail: 'second content', deadline: '2020-12-01')
-        task = FactoryBot.create(:task, name: 'status', detail: 'second content', deadline: '2020-12-01', progress: '着手中')
-        task = FactoryBot.create(:task, name: 'status1', detail: 'second content', deadline: '2020-12-01', progress: '着手中')
-      end
-      it '検索条件に該当したタイトルのみ表示されていること' do
+    context '複数のタスクを作成した場合' do
+      it 'タスクが作成日時の降順に並んでいること' do
         visit tasks_path
-        fill_in 'name', with: 'third title'
-        click_button '検索'
-        task_list = all('.task_name')
-        expect(task_list[0]).to have_content 'third title'
-      end
-      it '検索条件に該当しないタイトルは表示されていないこと', :retry => 3 do
-        visit tasks_path
-        fill_in 'name', with: 'third title'
-        click_button '検索'
-        task_list = all('.task_name')
-        wait.until{ expect(task_list[0]).to_not have_content 'second content' }
-      end
-      it 'ステータスに該当するタイトルのみ表示すること' do
-        visit tasks_path
-        select '着手中', from: 'progress'
-        click_button '検索'
-        task_list = all('.task_name')
-        expect(task_list[0]).to have_content 'progress'
-      end
-      it 'ステータスに該当しないタイトルは表示されないこと' do
-        visit tasks_path
-        select '着手中', from: 'progress'
-        click_button '検索'
-        task_list = all('.task_name')
-        expect(task_list[0]).to_not have_content "second content"
-      end
-      it '複合的な検索条件に該当するタイトルのみ表示すること' do
-        visit tasks_path
-        select '着手中', from: 'progress'
-        click_button '検索'
-        task_list = all('.task_name')
-        wait.until { expect(task_list[0]).to have_content "status1" }
-        wait.until { expect(task_list[1]).to have_content "status" }
+        task_list = all('.task_row') # タスク一覧を配列として取得するため、View側でidを振っておく
+
+        expect(page).to have_content '付け加えた名前3'
+        expect(page).to have_content '付け加えた名前1'
       end
     end
-
   end
+
   describe 'タスク登録画面' do
     context '必要項目を入力して、createボタンを押した場合' do
-      it 'データが保存される' do
+      it 'データが保存されること' do
         visit new_task_path
         fill_in "task_name", with: "abcdef"
         fill_in "task_detail", with: "ghijkl"
-        click_on "Create Task"
+        click_on "登録する"
 
         expect(page).to have_content "abcdef"
-        expect(page).to have_content "ghijkl"
       end
     end
   end
+
   describe 'タスク詳細画面' do
-    context '任意のタスク詳細画面に遷移した場合' do
-      it '該当タスクの内容が表示されたページに遷移する' do
+     context '任意のタスク詳細画面に遷移した場合' do
+       it '該当タスクの内容が表示されたページに遷移すること' do
         task = FactoryBot.create(:task, name: 'wwwww', detail: 'xxxx')
-        visit tasks_path
+        visit task_path(task)
+         
+         expect(page).to have_content "wwwww"
+       end
+     end
+  end
 
-        expect(page).to have_content "wwwww"
-        expect(page).to have_content "xxxx"
+  describe 'タスク一覧' do
+    context '最終期限ボタンを押したら' do
+      
+      before do
+        
+        # 1 全てのタスクを取得してdeadlineを一日置きになる様に設定する
+        all_tasks = Task.all
+        all_tasks.each_with_index do |task, i|
+          task.deadline = Date.today + i
+          task.save
+        end
+       end
+      it '期日が迫っている日から見せ、progressが登録されている' do    
+        visit tasks_path
+        click_on "終了期限でソート"
+        
+        sleep 3
+        
+        expect(page).to have_content "付け加えたコメント3"
+       
       end
     end
   end
 
+  describe 'タスク一覧' do
+    context '進捗状態で完了、を指定後、検索を押したら' do
+    it '完了タスクだけ表示' do
+        visit tasks_path
+        all_tasks = Task.all
+        
+        find('#task_progress').find("option[value='2']").select_option  
+
+        click_on "検索"
+
+        sleep 3
+        expect(find("tbody").text).to have_content "完了"
+        expect(find("tbody").text).not_to have_content "着手中"
+        expect(find("tbody").text).not_to have_content "未着手"
+      end
+    end
+  end
+
+  describe 'タスク一覧' do
+    context 'タスク名Name検索で、付け加えた名前1、を指定後、検索を押したら' do
+    it 'タスク名、付け加えた名前1、だけを表示' do
+        visit tasks_path
+        all_tasks = Task.all
+        
+        fill_in "task_name", with: "付け加えた名前1"
+        click_on "検索"
+        
+        sleep 3
+        
+        expect(find("tbody").text).to have_content "付け加えた名前1"
+
+      end
+    end
+  end
 
 end
