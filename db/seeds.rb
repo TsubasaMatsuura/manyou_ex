@@ -1,7 +1,59 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+5.times do |n|
+  User.create(
+    name: "test_admin_#{n + 1}",
+    email: "test_admin_#{n + 1}@gmail.com",
+    password: "0000000",
+    password_confirmation: "0000000",
+    admin: true
+  )
+end
+
+5.times do |n|
+  User.create(
+    name: "test_user_#{n + 1}",
+    email: "test_user_#{n + 1}@gmail.com",
+    password: "0000000",
+    password_confirmation: "0000000",
+    admin: false
+  )
+end
+
+#task作成
+User.all.each do |user|
+  5.times do |i|
+    user.tasks.create(
+      task_name: "#{i}番目のタスク",
+      description: "#{i}番目のタスクの内容",
+      deadline: Date.today.change(day: i+1),
+      status: "未着手",
+      rank: 0,
+      user_id: user.id
+    )
+  end
+end
+
+User.all.each do |user|
+  5.times do |i|
+    user.tasks.create(
+      task_name: "#{i}番目のタスク",
+      description: "#{i}番目のタスクの内容",
+      deadline: Date.today.change(day: i+2),
+      status: "着手中",
+      rank: 1,
+      user_id: user.id
+    )
+  end
+end
+
+User.all.each do |user|
+  5.times do |i|
+    user.tasks.create(
+      task_name: "#{i}番目のタスク",
+      description: "#{i}番目のタスクの内容",
+      deadline: Date.today.change(day: i+3),
+      status: "完了",
+      rank: 2,
+      user_id: user.id
+    )
+  end
+end
