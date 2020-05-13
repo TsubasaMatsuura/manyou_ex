@@ -41,8 +41,9 @@
   </thead>
 
   <tbody>
+    <% if @tasks.present? %>
     <% @tasks.each do |task| %>
-      <tr>
+      <tr class = "task_row">
         <td><%= task.name %></td>
         <td><%= task.detail %></td>
         <td><%= task.deadline %></td>
@@ -53,9 +54,10 @@
         <td class="btn btn-success"><%= link_to '消去', task, method: :delete, data: { confirm: '本当によろしいですか?' } %></td>
       </tr>
     <% end %>
+    <%= paginate @tasks %>
+    <% end%>
   </tbody>
 </table>
 
 <br>
 
- <%= paginate @tasks %>

@@ -1,5 +1,6 @@
 class Task < ApplicationRecord
-	scope :sorted_by, -> (sort_option) do
+	belongs_to :user
+  scope :sorted_by, -> (sort_option) do
 
     if sort_option.nil?
       order(priority: :desc).order(created_at: :desc)

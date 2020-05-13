@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  protect_from_forgery
   before_action :login_check_user, only: [:new]
 
   def new
