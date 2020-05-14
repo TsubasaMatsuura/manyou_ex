@@ -1,60 +1,69 @@
 class Admin::UsersController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :destroy]
-  before_action :login_check
-  before_action :check_admin
+    before_action :set_user, only: [:show, :edit, :update, :destroy]
+    #before_action :require_login
 
-  def index
-    @users = User.includes(:tasks).order(created_at: :desc).page(params[:page]).per(10)
-  end
-
-  def new
-    @user = User.new
-  end
-
-  def create
-    @user = User.new(params_user)
-    if @user.save
-      redirect_to admin_users_path, info: "ユーザー登録しました"
-    else
-      render :new
+    def index
+      @users = User.all
+      unless current_user.admin?
+        redirect_to user_path(current_user), notice: '管理者権限ページへアクセスは出来ません!'
+      end
     end
-  end
 
-  def show
-    @user = User.find(params[:id])
-    @user_tasks = @user.tasks
-  end
-
-  def edit
-    @user = User.find(params[:id])
-  end
-
-  def update
-    if @user.update(params_user)
-      redirect_to admin_users_path, info: "ユーザー情報を更新しました"
-    else
-      render :edit
+    def create
+        @user = User.new(user_params)
+        if @user.save
+          redirect_to user_path(@user.id)
+        else
+          render :new
+        end
     end
-  end
 
-  def destroy
-    if @user.destroy
-      redirect_to admin_users_path, info: "ユーザー情報を削除しました"
-    else
-      redirect_to admin_users_path, danger: '削除できません。少なくとも1人の管理者は必要です。'
+    def new
+        @user = User.new
     end
-  end
 
-  private
-  def params_user
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :admin )
-  end
+    def edit
+    end
 
-  def set_user
-    @user = User.find(params[:id])
-  end
+    def show
+      @user = User.find(params[:id])
+      @tasks = @user.tasks
+    
+    end
 
-  def check_admin
-    redirect_to tasks_path, danger: "あなたは管理者ではありません" unless current_user.admin?
-  end
+    def update
+      @user.update(user_params)
+      if User.where(admin: :true).count == 0
+        @user.update(admin: :true)
+        redirect_to admin_users_path
+        flash[:warning] = "管理者は編集できました"
+      elsif @user.save == false
+        flash[:danger] = "管理者は１名以下なので編集できませんでした"
+        render :edit
+      elsif User.where(admin: :true).count >= 1
+        redirect_to admin_users_path
+        flash[:info] = "ユーザー詳細を編集しました！"
+      end
+ 
+    end
+
+    def destroy
+      
+      if @user.destroy
+        redirect_to admin_users_path, notice: 'ユーザーは削除されました。'
+      else
+        redirect_to admin_users_path, notice: 'ユーザーは削除出来ませんでした'
+      end
+    end
+
+    private
+
+    def set_user
+      @user = User.find(params[:id])
+    end
+
+    def user_params
+        params.require(:user).permit(:name, :email, :password,
+            :password_confirmation, :admin)
+    end
 end

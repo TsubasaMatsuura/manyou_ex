@@ -1,7 +1,6 @@
 class User < ApplicationRecord
 	before_validation { email.downcase! }
-  before_update :must_not_destroy_last_admin_user
-  before_destroy :must_not_destroy_last_admin_user
+  before_destroy :do_not_destroy_last_admin
 
   validates :name, presence: true, length: { maximum: 30 }
   validates :email, presence: true, uniqueness:true,
@@ -12,12 +11,9 @@ class User < ApplicationRecord
   has_secure_password
   has_many :tasks, dependent: :destroy
 
-  private
-  def must_not_destroy_last_admin_user
-    user = User.find(id)
-    if user.admin? && User.where(admin:true).count == 1
-      errors.add(:base, '管理者権限は変更できません。少なくとも1人の管理者は必要です。')
-      throw :abort
+  
+   private
+    def do_not_destroy_last_admin
+        throw(:abort) if User.where(admin: true).count <= 1 && self.admin?
     end
-  end
 end
