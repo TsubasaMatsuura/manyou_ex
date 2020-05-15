@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-	belongs_to :user
+
   scope :sorted_by, -> (sort_option) do
 
     if sort_option.nil?
@@ -13,6 +13,7 @@ class Task < ApplicationRecord
 
   validates :name, presence: true 
   validates :detail, presence: true 
+  belongs_to :user
 
 
   enum progress: { "未着手": 0, "着手中": 1, "完了": 2 }

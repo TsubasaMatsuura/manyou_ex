@@ -40,7 +40,8 @@ class TasksController < ApplicationController
 
   # POST /tasks
   def create
-    @task = Task.new(task_params)
+    @task = current_user.tasks.build(task_params)
+    #@task = Task.new(task_params)
 
     if @task.save
       redirect_to @task, notice: 'Task was successfully created.'
