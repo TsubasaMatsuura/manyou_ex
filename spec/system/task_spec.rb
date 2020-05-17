@@ -10,9 +10,9 @@ RSpec.describe 'タスク管理機能', type: :system do
 
   def login
     visit new_session_path
-    fill_in "Email", with: @user.email
-    fill_in "Password", with: "00000000"
-    click_on "Log in"
+    fill_in 'session[email]', with: 'sample@example.com'
+        fill_in 'session[password]', with: '00000000'
+        click_button 'Log In'
   end
 
   describe 'タスク一覧画面' do
@@ -55,7 +55,7 @@ RSpec.describe 'タスク管理機能', type: :system do
      context '任意のタスク詳細画面に遷移した場合' do
        it '該当タスクの内容が表示されたページに遷移すること' do
         login
-        task = FactoryBot.create(:task, name: 'wwwww', detail: 'xxxx')
+        task = FactoryBot.create(:task, name: 'wwwww', detail: 'xxxx', user:@user)
         visit task_path(task)
          
          expect(page).to have_content "wwwww"
