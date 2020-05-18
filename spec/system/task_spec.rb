@@ -10,10 +10,18 @@ RSpec.describe 'タスク管理機能', type: :system do
 
   def login
     visit new_session_path
-    fill_in "Email", with: @user.email
-    fill_in "Password", with: "00000000"
-    click_on "Log in"
+    fill_in 'session[email]', with: 'sample@example.com'
+    fill_in 'session[password]', with: '00000000'
+    click_button 'Log In'
+
   end
+
+  def label_create
+    Label.create(id:1,title: "プライベート")
+    Label.create(id:2,title: "プログラミング")
+    @label3 = Label.create(id:3,title: "ブログ")
+  end
+
 
   describe 'タスク一覧画面' do
     context 'タスクを作成した場合' do
@@ -55,7 +63,7 @@ RSpec.describe 'タスク管理機能', type: :system do
      context '任意のタスク詳細画面に遷移した場合' do
        it '該当タスクの内容が表示されたページに遷移すること' do
         login
-        task = FactoryBot.create(:task, name: 'wwwww', detail: 'xxxx')
+        task = FactoryBot.create(:task, name: 'wwwww', detail: 'xxxx',user:@user)
         visit task_path(task)
          
          expect(page).to have_content "wwwww"
@@ -120,6 +128,41 @@ RSpec.describe 'タスク管理機能', type: :system do
         sleep 3
         
         expect(find("tbody").text).to have_content "付け加えた名前1"
+
+      end
+    end
+  end
+
+  describe 'タスク一覧' do
+    context '新規タスク作成時、ラベル付け' do
+      it '複数ラベル表示' do
+        
+        label_create
+        login
+        visit tasks_path
+        click_on "新規作成"
+        
+         fill_in "task_name", with: "abcdef"
+        fill_in "task_detail", with: "ghijkl"
+        click_on "登録する"
+        sleep 3
+        click_on "Back"
+        
+        
+        sleep 3
+      end 
+    end
+
+    context 'ブログ、でラベル検索' do
+      it 'ブログタグ付のタスクだけを閲覧' do
+
+     
+      label_create
+      login
+      visit tasks_path
+      click_on "Search"
+
+      sleep 3
 
       end
     end

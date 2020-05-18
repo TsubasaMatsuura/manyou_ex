@@ -25,8 +25,7 @@ class TasksController < ApplicationController
       @tasks = @tasks.page(params[:page]).per(5)
     
     end
-  else
-    redirect_to new_user_path
+  
   end
 
   # GET /tasks/1
