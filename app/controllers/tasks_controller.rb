@@ -3,11 +3,34 @@ class TasksController < ApplicationController
 
   # GET /tasks
   def index
-    @tasks = Task.all
+    if current_user.present?
+      @tasks = current_user.tasks
+      if params[:sort_expired] == "true"  
+        @tasks = @tasks.order(deadline: :ASC)
+
+      elsif params[:sort_priority] == "true"
+        @tasks = @tasks.order(priority: :DESC)
+
+      elsif params[:task].present?
+        name = params[:task][:name]
+        progress = params[:task][:progress]
+        @tasks = @tasks.search_name(name).search_progress(progress)
+
+      elsif  params[:label_id].present?
+        @tasks = @tasks.joins(:labels).where(labels: { id: params[:label_id] }) 
+
+      else
+        @tasks = @tasks.all.order(created_at: :desc)
+      end
+      @tasks = @tasks.page(params[:page]).per(5)
+    
+    end
+  
   end
 
   # GET /tasks/1
   def show
+    @labels = @task.labels
   end
 
   # GET /tasks/new
@@ -21,7 +44,8 @@ class TasksController < ApplicationController
 
   # POST /tasks
   def create
-    @task = Task.new(task_params)
+    @task = current_user.tasks.build(task_params)
+    #@task = Task.new(task_params)
 
     if @task.save
       redirect_to @task, notice: 'Task was successfully created.'
@@ -53,6 +77,6 @@ class TasksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def task_params
-      params.require(:task).permit(:name, :detail, :deadline, :progress, :priority)
+      params.require(:task).permit(:name, :detail, :deadline, :progress, :priority, { label_ids: [] })
     end
 end

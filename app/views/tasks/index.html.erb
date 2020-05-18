@@ -1,35 +1,74 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Tasks</h1>
+<h1 style="background-color:red">タスク</h1>
+<div class="task_header_nav">
+<ul class="nav nav-pills">
+  <li class="nav-item">
+    <%= link_to t("新規作成"), new_task_path, class: "nav-link active btn btn-primary" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to '終了期限でソート', tasks_path(sort_expired: "true"),class: "nav-link active btn btn-primary" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to t("優先順位でソート"), tasks_path(sort_priority: "true"),class: "nav-link active btn btn-primary" %>
+  </li>
+</ul>
+</div>
+<%= form_with(model: Task.new, url: tasks_path, method: :get, local: true ) do |form| %>
+  <div >
+    <%= form.label ("タイトル") %>
+    <%= form.text_field :name %>
+  </div>
+  <div >
+    <%= form.label ("進捗") %>
+    <%= form.select :progress, [["未着手", 0 ], ["着手中", 1 ], ["完了", 2 ]] ,{include_blank: true}%>
+  </div>
+   <div class="btn btn-primary">
+   <%= form.submit "検索" %>
+   </div>
+<% end %>
+
+<%= form_with url: tasks_path, method: :get, local: true do |form| %>
+  <%= form.select("label_id", Label.pluck(:title, :id), { include_blank: true }) %>
+  <%= form.submit 'Search', title: nil %>
+<% end %>
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Detail</th>
-      <th>Deadline</th>
-      <th>Progress</th>
-      <th>Priority</th>
+      <th>タイトル</th>
+      <th>内容</th>
+      <th>終了期限</th>
+      <th>進捗</th>
+      <th>優先順位</th>
+      <th>ラベル</th>
       <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
+    <% if @tasks.present? %>
     <% @tasks.each do |task| %>
-      <tr>
+      <tr class = "task_row">
         <td><%= task.name %></td>
         <td><%= task.detail %></td>
         <td><%= task.deadline %></td>
         <td><%= task.progress %></td>
         <td><%= task.priority %></td>
-        <td><%= link_to 'Show', task %></td>
-        <td><%= link_to 'Edit', edit_task_path(task) %></td>
-        <td><%= link_to 'Destroy', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+          <% task.labels.each do |label| %>
+            <%= label.name %>
+          <% end %>
+        </td>        
+        <td class="btn btn-success"><%= link_to '詳細', task %></td>
+        <td class="btn btn-success"><%= link_to '編集', edit_task_path(task) %></td>
+        <td class="btn btn-success"><%= link_to '消去', task, method: :delete, data: { confirm: '本当によろしいですか?' } %></td>
       </tr>
     <% end %>
+    <%= paginate @tasks %>
+    <% end%>
   </tbody>
 </table>
 
 <br>
 
-<%= link_to 'New Task', new_task_path %>

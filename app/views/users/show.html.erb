@@ -1,24 +1,22 @@
-<p id="notice"><%= notice %></p>
+<h1><%= t("activerecord.view.user.my_page") %></h1>
 
-<p>
-  <strong>Name:</strong>
-  <%= @user.name %>
-</p>
+<div class="task_header_nav">
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <%= link_to t("activerecord.view.task.tasks_list"), tasks_path, class: "nav-link active btn btn-primary" %>
+    </li>
+  </ul>
+</div>
 
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
-
-<p>
-  <strong>Password digest:</strong>
-  <%= @user.password_digest %>
-</p>
-
-<p>
-  <strong>Admin:</strong>
-  <%= @user.admin %>
-</p>
-
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>
+<table class="table table-striped">
+  <tbody>
+  <tr>
+    <th><%= t('activerecord.attributes.user.name') %></th>
+    <td><%= @user.name %></td>
+  </tr>
+  <tr>
+    <th><%= t('activerecord.attributes.user.email') %></th>
+    <td><%= @user.email %></td>
+  </tr>
+  </tbody>
+</table>
