@@ -36,6 +36,10 @@
      <%= form.select :priority, Task.priorities.keys %>
   </div>
 
+  <div class="field">
+    <%= form.collection_check_boxes(:label_ids, Label.all, :id, :title) %>
+  </div> 
+
   <div class="btn btn-success">
     <%= form.submit %>
   </div>

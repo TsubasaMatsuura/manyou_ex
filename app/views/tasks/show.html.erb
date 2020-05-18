@@ -25,5 +25,12 @@
   <%= @task.priority %>
 </p>
 
+<p>
+  <strong>　<%= t('Task.labels') %>:</strong>
+  <% @labels.each do |label| %>
+    <%= label.name %>
+  <% end %>
+</p>
+
 <div class="btn btn-success"><%= link_to 'Edit', edit_task_path(@task) %> </div>
 <div class="btn btn-danger"><%= link_to 'Back', tasks_path %> </div>

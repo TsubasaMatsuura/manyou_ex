@@ -28,6 +28,11 @@
    </div>
 <% end %>
 
+<%= form_with url: tasks_path, method: :get, local: true do |form| %>
+  <%= form.select("label_id", Label.pluck(:title, :id), { include_blank: true }) %>
+  <%= form.submit 'Search', title: nil %>
+<% end %>
+
 <table>
   <thead>
     <tr>

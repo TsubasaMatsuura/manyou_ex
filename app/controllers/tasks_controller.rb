@@ -16,17 +16,22 @@ class TasksController < ApplicationController
         progress = params[:task][:progress]
         @tasks = @tasks.search_name(name).search_progress(progress)
 
+      elsif  params[:label_id].present?
+        @tasks = @tasks.joins(:labels).where(labels: { id: params[:label_id] }) 
+
       else
         @tasks = @tasks.all.order(created_at: :desc)
       end
       @tasks = @tasks.page(params[:page]).per(5)
     
     end
-
+  else
+    redirect_to new_user_path
   end
 
   # GET /tasks/1
   def show
+    @labels = @task.labels
   end
 
   # GET /tasks/new
@@ -73,6 +78,6 @@ class TasksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def task_params
-      params.require(:task).permit(:name, :detail, :deadline, :progress, :priority)
+      params.require(:task).permit(:name, :detail, :deadline, :progress, :priority, { label_ids: [] })
     end
 end

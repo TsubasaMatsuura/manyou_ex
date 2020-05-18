@@ -1,5 +1,8 @@
 class Task < ApplicationRecord
 
+  has_many :label_tasks, dependent: :destroy
+  has_many :labels, through: :label_tasks
+
   scope :sorted_by, -> (sort_option) do
 
     if sort_option.nil?
